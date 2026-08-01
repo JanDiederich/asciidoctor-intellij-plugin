@@ -161,6 +161,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("mouseEvents.js")).append("\"></script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("sourceLanguageIcon.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("copyCodeBlock.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("runCodeBlock.js")).append("\"></script>\n")
       .append("""
@@ -777,6 +778,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
+            "__IntelliJTools.addSourceLanguageIcons && __IntelliJTools.addSourceLanguageIcons();" +
             "__IntelliJTools.addCopyButtons && __IntelliJTools.addCopyButtons();" +
             "__IntelliJTools.addRunButtons && __IntelliJTools.addRunButtons();" +
             "}" +
@@ -1219,6 +1221,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "copyCode : function(data) {" +
             myCopyCode.inject("data") +
             "}," +
+            "languageIconBaseUrl : '" + StringEscapeUtils.escapeEcmaScript(PreviewStaticServer.getIconUrl("languages/")) + "'," +
             "runCode : function(data) {" +
             myRunCode.inject("data") +
             "}," +
@@ -1231,6 +1234,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
             "__IntelliJTools.addMouseHandler && __IntelliJTools.addMouseHandler();" +
+            "__IntelliJTools.addSourceLanguageIcons && __IntelliJTools.addSourceLanguageIcons();" +
             "__IntelliJTools.addCopyButtons && __IntelliJTools.addCopyButtons();" +
             "__IntelliJTools.addRunButtons && __IntelliJTools.addRunButtons();" +
             "}; " +

@@ -75,7 +75,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
       }
       result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "scripts/").toExternalForm() + highlightjs + "; "
         + "style-src 'unsafe-inline' https: http: " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "styles/").toExternalForm() + "; "
-        + "img-src file: data: localfile: *; connect-src 'none'; font-src *; " +
+        + "img-src file: data: localfile: * " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "icons/").toExternalForm() + "; connect-src 'none'; font-src *; " +
         "object-src data: file: localfile: *;" + // used for interactive SVGs
         "media-src 'none'; child-src 'none'; " +
         "frame-src 'self' https://player.vimeo.com/ https://www.youtube.com/ https://structurizr.com/"; // used for vimeo/youtube iframes
@@ -83,7 +83,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
       // this will restrict external content as much as possible
       result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "scripts/").toExternalForm() + "; "
         + "style-src 'unsafe-inline' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "styles/").toExternalForm() + "; "
-        + "img-src file: data: localfile: ; connect-src 'none'; " +
+        + "img-src file: data: localfile: " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "icons/").toExternalForm() + "; connect-src 'none'; " +
         "font-src " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/").toExternalForm() + "; " +
         "object-src data: file: localfile: ;" + // used for interactive SVGs
         "media-src 'none'; child-src 'none'; " +
@@ -112,6 +112,12 @@ public class PreviewStaticServer extends HttpRequestHandler {
   }
 
   @NotNull
+  private static String getPublicStaticUrl(@NotNull String staticPath) {
+    Url url = Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + staticPath);
+    return Objects.requireNonNull(url).toExternalForm();
+  }
+
+  @NotNull
   public static String getScriptUrl(@NotNull String scriptFileName) {
     return getStaticUrl("scripts/" + scriptFileName);
   }
@@ -119,6 +125,11 @@ public class PreviewStaticServer extends HttpRequestHandler {
   @NotNull
   public static String getStyleUrl(@NotNull String scriptFileName) {
     return getStaticUrl("styles/" + scriptFileName);
+  }
+
+  @NotNull
+  public static String getIconUrl(@NotNull String iconPath) {
+    return getPublicStaticUrl("icons/" + iconPath);
   }
 
   public static Url getFileUrl(OpenInBrowserRequest request, VirtualFile file) {
@@ -149,7 +160,10 @@ public class PreviewStaticServer extends HttpRequestHandler {
 
   @Override
   public boolean isAccessible(@NotNull HttpRequest request) {
-    return request.uri().startsWith(PREFIX + "styles/") || request.uri().startsWith(PREFIX + "scripts/") || super.isAccessible(request);
+    return request.uri().startsWith(PREFIX + "styles/")
+      || request.uri().startsWith(PREFIX + "scripts/")
+      || request.uri().startsWith(PREFIX + "icons/")
+      || super.isAccessible(request);
   }
 
   @Override
@@ -182,6 +196,10 @@ public class PreviewStaticServer extends HttpRequestHandler {
       sendResource(request,
         context.channel(),
         fileName);
+    } else if ("icons".equals(contentType)) {
+      sendResource(request,
+        context.channel(),
+        "/icons/" + fileName);
     } else if ("source".equals(action)) {
       String fileParameter = getParameter(urlDecoder, "file");
       String projectNameParameter = getParameter(urlDecoder, "projectName");

@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
@@ -76,6 +77,11 @@ public class BrowserPanel implements Disposable {
         </script>
         """)
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
+      .append("<script>window.JavaPanelBridge = window.JavaPanelBridge || {}; window.JavaPanelBridge.languageIconBaseUrl = '")
+      .append(StringEscapeUtils.escapeEcmaScript(PreviewStaticServer.getIconUrl("languages/")))
+      .append("';</script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("sourceLanguageIcon.js")).append("\"></script>\n")
+      .append("<script>if ('__IntelliJTools' in window) { __IntelliJTools.addSourceLanguageIcons && __IntelliJTools.addSourceLanguageIcons(); }</script>\n")
       .toString();
   });
 
